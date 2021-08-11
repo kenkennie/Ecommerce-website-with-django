@@ -1,0 +1,183 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="meta description">
+
+    <!-- Site title -->
+    <title>Huge variety - Mega Shop </title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon" />
+    <!-- Bootstrap CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Font-Awesome CSS -->
+    <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet">
+    <!-- helper class css -->
+    <link href="{% static 'css/helper.min.css' %}" rel="stylesheet">
+    <!-- Plugins CSS -->
+    <link href="{% static 'css/plugins.css' %}" rel="stylesheet">
+    <!-- Main Style CSS -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/skin-default.css' %}" rel="stylesheet" id="galio-skin">
+</head>
+
+<body>
+
+<!-- navbar -->
+{% include 'partials/_navbar.html' %}
+
+{% block content %}
+   
+
+{% endblock  %}
+
+{% include 'partials/_footer.html' %}
+
+
+</body>
+
+    <!--All jQuery, Third Party Plugins & Activation (main.js) Files-->
+    <script src="{% static 'js/vendor/modernizr-3.6.0.min.js' %}"></script>
+    <!-- Jquery Min Js -->
+    <script src="{% static 'js/vendor/jquery-3.3.1.min.js' %}"></script>
+    <!-- Popper Min Js -->
+    <script src="{% static 'js/vendor/popper.min.js' %}"></script>
+    <!-- Bootstrap Min Js -->
+    <script src="{% static 'js/vendor/bootstrap.min.js' %}"></script>
+    <!-- Plugins Js-->
+    <script src="{% static 'js/plugins.js' %}"></script>
+    <!-- Ajax Mail Js -->
+    <script src="{% static 'js/ajax-mail.js' %}"></script>
+    <!-- Active Js -->
+    <script src="{% static 'js/main.js' %}"></script>
+    <!-- Switcher JS [Please Remove this when Choose your Final Projct] -->
+    <script src="{% static 'js/switcher.js' %}"></script>
+
+
+    <script>
+        //Add to cart
+        $(document).on('click', '#add-button', function(e){
+
+
+
+            //prevent  btn to fire off unless clicked
+            e.preventDefault();
+            
+            $.ajax({
+    
+                type:'POST', 
+                url:'{% url "cart:cart_add" %}', 
+                
+                data:{
+                    //capture product id from btn
+                    productid: $('#add-button').val(),
+                    productqty:$('#qty-btn').val(),
+                    //capture option  from  dropdown#
+  
+                    csrfmiddlewaretoken :"{{csrf_token}}",
+                    action:'post',
+    
+                },
+                
+                success:function(json){
+                document.getElementById("cart-qty").innerHTML=json.qty
+                
+                  //capture quantity when added
+                },
+                error: function(xhr,errmsg,err){}
+            });
+        });
+    
+
+        //Delete from cart
+
+        $(document).on('click', '.delete-btn', function(e){
+
+
+
+            //prevent  btn to fire off unless clicked
+            e.preventDefault();
+            var prod_id = $(this).data('index')
+            // get prduct id when button is pressed
+
+            $.ajax({
+    
+                type:'POST', 
+                url:'{% url "cart:cart_delete" %}', 
+                
+                data:{
+                    //capture product id from btn
+                    productid: $(this).data('index'),
+                    //capture option  from  dropdown#
+  
+                    csrfmiddlewaretoken :"{{csrf_token}}",
+                    action:'delete',
+    
+                },
+                
+                success:function(json){
+                    $('.product-item[data-index = "' + prod_id + '"]').remove();
+                    //select product-item (div) to remove from selected id
+                
+                },
+                error: function(xhr,errmsg,err){}
+            });
+        });
+
+
+
+
+        
+        //Update  cart
+
+        $(document).on('click', '.update-btn', function(e){
+
+
+
+            //prevent  btn to fire off unless clicked
+            e.preventDefault();
+            var prod_id = $(this).data('index')
+            // get prduct id when button is pressed
+
+            $.ajax({
+    
+                type:'POST', 
+                url:'{% url "cart:cart_update" %}', 
+                
+                data:{
+                    //capture product id from btn
+                    productid: $(this).data('index'),
+                    productqty: $('#number' + prod_id +  'option:selected' ).text(),
+                    //capture option  from  dropdown#
+  
+                    csrfmiddlewaretoken :"{{csrf_token}}",
+                    action:'update',
+    
+                },
+                
+                success:function(json){
+                    //select product-item (div) to remove from selected id
+                
+                  //capture quantity when added
+                },
+                error: function(xhr,errmsg,err){}
+            });
+        });
+    
+  
+    
+    
+    </script>
+    
+
+</body>
+
+
+
+</html>
